@@ -1,6 +1,4 @@
 #!/usr/bin/python
-from keithley import Keithley
-
 import tkinter as tk
 import tkinter.ttk as ttk
 
@@ -30,6 +28,8 @@ except ImportError:
 matplotlib.use("GTKAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
+
+from keithley import Keithley
 
 def serial_ports():
     """ Lists serial port names
@@ -78,6 +78,11 @@ class KeithleyPlot(tk.Frame):
         # variable for the connected port
         self.comport = tk.StringVar(master)
         self.portlist = serial_ports()
+        
+        # check for COM ports
+        if len(self.portlist) == 0:
+            sys.exit('No COM ports found!')
+        
         self.frequency = tk.StringVar(master)
         self.frequencies = ['0.1 Hz', '0.5 Hz', '1 Hz', '2 Hz', '3 Hz',]
         
