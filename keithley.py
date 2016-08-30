@@ -15,33 +15,43 @@ class Keithley():
         
         # compile the regex to parse read out values
         self.valuepattern = re.compile('^([+|-][0-9]{1}\.[0-9]{2,6}E-[0-9]{2}A).*$')
+        
+        # save connected state
+        self.connected = True
 
     def read_value(self):
-        self.serialwrite('READ?')
-        # read 43 bytes and decode to unicode
-        response = self.ser.read(43).decode()
-        match = self.valuepattern.match(response)
-        
-        # check whether we match the expected output
-        value = u''
-        if match:
-            value = match.group(1)
+        if self.connected:
+            self.serialwrite('READ?')
+            # read 43 bytes and decode to unicode
+            response = self.ser.read(43).decode()
+            match = self.valuepattern.match(response)
+            
+            # check whether we match the expected output
+            value = u''
+            if match:
+                value = match.group(1)
 
-        value = value.replace('E', 'e').replace('A', '')
+            value = value.replace('E', 'e').replace('A', '')
 
-        return value
+            return value
 
     def serialwrite(self, text):
-        self.ser.write(text.encode() + b'\r\n')
+        if self.connected:
+            self.ser.write(text.encode() + b'\r\n')
 
     def zerocorrect(self):
-        self.serialwrite('*RST') 
-        self.serialwrite('SYST:ZCH ON')
-        self.serialwrite('RANG .002')
-        self.serialwrite('NPLC 5')
-        self.serialwrite('INIT')
-        self.serialwrite('SYST:ZCOR:ACQ')
-        self.serialwrite('SYST:ZCOR ON')
-        self.serialwrite('RANG:AUTO ON')
-        self.serialwrite('SYST:ZCH OFF')
-        self.read_value()
+        if self.connected:
+            self.serialwrite('*RST') 
+            self.serialwrite('SYST:ZCH ON')
+            self.serialwrite('RANG .002')
+            self.serialwrite('NPLC 5')
+            self.serialwrite('INIT')
+            self.serialwrite('SYST:ZCOR:ACQ')
+            self.serialwrite('SYST:ZCOR ON')
+            self.serialwrite('RANG:AUTO ON')
+            self.serialwrite('SYST:ZCH OFF')
+            self.read_value()
+        
+    def close(self):
+        if self.connected:
+            self.ser.close()
