@@ -6,13 +6,27 @@ import tkinter.ttk as ttk
 
 import sys
 import glob
-import serial
+
+try:
+    import serial
+except ImportError:
+    print('Please install pyserial!')
+    sys.exit()
 
 import threading
 
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    print('Please install numpy!')
+    sys.exit()
 
-import matplotlib
+try:
+    import matplotlib
+except ImportError:
+    print('Please install matplotlib!')
+    sys.exit()
+    
 matplotlib.use("GTKAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
@@ -74,7 +88,7 @@ class KeithleyPlot(tk.Frame):
         self.grid_rowconfigure(0,weight=1)
         
         # create a drop down menu for the comport
-        self.comportselector = ttk.OptionMenu(self.master, self.comport, self.portlist)
+        self.comportselector = ttk.OptionMenu(self.master, self.comport, self.portlist[0], *self.portlist)
         self.comportselector.grid(row = 2, column = 0, sticky='W')
         
         # create a drop down menu for the update frequency
@@ -146,12 +160,17 @@ class KeithleyPlot(tk.Frame):
         self.keithley.zerocorrect()
         
     def connectkeithley(self):
-        comoption = self.comport.get().replace('(','').replace(')','').replace('\'','').replace(',','')
+        # get the selected com port
+        comoption = self.comport.get()
+        # connect
         self.keithley = Keithley(comoption)
+        
+        # adjust the GUI elements
         self.startb.config(state='normal')
         self.stopb.config(state='normal')
         self.zerocorrectb.config(state='normal')
         self.connectb.config(state='disabled')
+        self.comportselector.config(state='disabled')
         
     def printvalue(self):
         # only do this if we are running
@@ -209,7 +228,6 @@ class KeithleyPlot(tk.Frame):
         self.master.destroy()
         
 root = tk.Tk()
-root.minsize(300,300)
 root.geometry("980x560")
 app = KeithleyPlot(master=root)
 root.protocol("WM_DELETE_WINDOW", app.on_closing)
