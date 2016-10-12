@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import tkinter as tk
 import tkinter.ttk as ttk
+from tkinter import messagebox
 
 import sys
 import glob
@@ -168,7 +169,12 @@ class KeithleyPlot(tk.Frame):
         # get the selected com port
         comoption = self.comport.get()
         # connect
-        self.keithley = Keithley(comoption)
+        try:
+            self.keithley = Keithley(comoption)
+        except RuntimeError as e:
+            messagebox.showerror("COM Port error", e)
+            return
+            
         
         # adjust the GUI elements
         self.startb.config(state='normal')
@@ -199,7 +205,7 @@ class KeithleyPlot(tk.Frame):
 
             # plot - note that we don't use plt.plot, because it is horribly slow
             self.line.set_ydata(self.values[~np.isnan(self.values)])
-            self.line.set_xdata(self.time[~np.isnan(self.time)])
+            self.line.set_xdata(self.time[~np.isnan(self.values)])
             
             self.i = self.i + 1
 
@@ -207,7 +213,7 @@ class KeithleyPlot(tk.Frame):
             if self.i %10 == 1:
                 self.a.relim()
                 self.a.autoscale_view(scalex=False)
-                self.a.set_xlim(0, self.i + 20)
+                self.a.set_xlim(0, self.time + self.time/10)
             
             # draw the new line
             self.canvas.draw()
