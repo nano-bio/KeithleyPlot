@@ -15,9 +15,14 @@ class Keithley():
         
         # compile the regex to parse read out values
         self.valuepattern = re.compile('^([+|-][0-9]{1}\.[0-9]{2,6}E-[0-9]{2}A).*$')
-        
+
         # save connected state
         self.connected = True
+        self.serialwrite('*RST')
+        self.serialwrite('RANG:AUTO ON')
+        self.serialwrite('SYST:ZCH ON')
+        self.serialwrite('SYST:ZCH OFF')
+        self.serialwrite('INIT')
 
     def read_value(self):
         if self.connected:
