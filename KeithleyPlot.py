@@ -197,26 +197,25 @@ class KeithleyPlot(tk.Frame):
                 self.time[self.i, 0] = 0
             else:
                 self.time[self.i,0] = self.time[self.i - 1, 0] + delay
-                
+			
             #self.values = np.append(self.values, self.keithley.read_value())
             value = self.keithley.read_value()
             self.valuelabel['text'] = value + 'A'
-            self.values[self.i,0] = value
+            self.values[self.i,0] = float(value)
 
             # plot - note that we don't use plt.plot, because it is horribly slow
             self.line.set_ydata(self.values[~np.isnan(self.values)])
             self.line.set_xdata(self.time[~np.isnan(self.values)])
             
-            self.i = self.i + 1
-
             # rescale axes every tenth run
             if self.i %10 == 1:
                 self.a.relim()
                 self.a.autoscale_view(scalex=False)
-                self.a.set_xlim(0, self.time + self.time/10)
+                self.a.set_xlim(0, self.time[self.i, 0] + self.time[self.i, 0]/10 + 10*delay)
             
             # draw the new line
             self.canvas.draw()
+            self.i = self.i + 1
 
     def start(self):
         # clear the plot before we start a new measurement
