@@ -260,7 +260,7 @@ class KeithleyPlot(tk.Frame):
         ydata = self.values[~np.isnan(self.values)]
         xdata = self.time[~np.isnan(self.values)]
 
-        np.savetxt(f, np.hstack((xdata, ydata)), fmt=['%1.0d', '%1.14e'], delimiter='\t', header=comments)
+        np.savetxt(f, np.dstack((xdata, ydata))[0], fmt=['%1.0d', '%1.14e'], delimiter='\t', header=comments)
 
 
 root = tk.Tk()
