@@ -27,8 +27,8 @@ except ImportError:
     print('Please install matplotlib!')
     sys.exit()
 
-matplotlib.use("GTKAgg")
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
+matplotlib.use("TKAgg")
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from matplotlib.figure import Figure
 
 from keithley import Keithley
@@ -36,7 +36,6 @@ from keithley import Keithley
 
 def serial_ports():
     """ Lists serial port names
-
         :raises EnvironmentError:
             On unsupported or unknown platforms
         :returns:
@@ -149,11 +148,11 @@ class KeithleyPlot(tk.Frame):
 
         self.canvas = FigureCanvasTkAgg(self.f, self.master)
         self.canvas.get_tk_widget().grid(row=0, columnspan=8)
-        self.canvas.show()
+        self.canvas.draw()
 
         # add a toolbar
         self.toolbar_frame = ttk.Frame(self.master)
-        toolbar = NavigationToolbar2TkAgg(self.canvas, self.toolbar_frame)
+        toolbar = NavigationToolbar2Tk(self.canvas, self.toolbar_frame)
         toolbar.update()
         self.toolbar_frame.grid(row=1, columnspan=7, sticky='W')
 
@@ -269,3 +268,4 @@ app = KeithleyPlot(master=root)
 root.protocol("WM_DELETE_WINDOW", app.on_closing)
 root.wm_title("Keithley Plot")
 app.mainloop()
+
