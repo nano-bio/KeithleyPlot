@@ -158,7 +158,7 @@ class KeithleyPlot(tk.Frame):
 
     def clearplot(self):
         # clear the axes of everything
-        self.a.cla()
+        self.a.clear()
         self.canvas.draw()
 
         # overwrite variables 
@@ -213,16 +213,16 @@ class KeithleyPlot(tk.Frame):
 
             # plot - note that we don't use plt.plot, because it is horribly slow
             self.line.set_ydata(self.values[~np.isnan(self.values)])
-            self.line.set_xdata(self.time[~np.isnan(self.values)])
-
-            # rescale axes every tenth run
+            self.line.set_xdata(self.time[~np.isnan(self.values)]) 
+            
+            # rescale axes every hundredth run
             if self.i % 10 == 1:
                 self.a.relim()
                 self.a.autoscale_view(scalex=False)
                 self.a.set_xlim(0, self.time[self.i, 0] + self.time[self.i, 0] / 10 + 10 * delay)
 
             # draw the new line
-            self.canvas.draw()
+            self.canvas.draw_idle()
             self.i = self.i + 1
 
     def start(self):
@@ -263,7 +263,7 @@ class KeithleyPlot(tk.Frame):
 
 
 root = tk.Tk()
-root.geometry("980x560")
+root.geometry("980x640")
 app = KeithleyPlot(master=root)
 root.protocol("WM_DELETE_WINDOW", app.on_closing)
 root.wm_title("Keithley Plot")
