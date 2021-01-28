@@ -215,7 +215,7 @@ class KeithleyPlot(tk.Frame):
             self.line.set_ydata(self.values[~np.isnan(self.values)])
             self.line.set_xdata(self.time[~np.isnan(self.values)]) 
             
-            # rescale axes every hundredth run
+            # rescale axes every tenth run
             if self.i % 10 == 1:
                 self.a.relim()
                 self.a.autoscale_view(scalex=False)
@@ -263,7 +263,7 @@ class KeithleyPlot(tk.Frame):
 
 
 root = tk.Tk()
-root.geometry("980x640")
+root.geometry("980x600")
 app = KeithleyPlot(master=root)
 root.protocol("WM_DELETE_WINDOW", app.on_closing)
 root.wm_title("Keithley Plot")
