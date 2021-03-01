@@ -208,6 +208,7 @@ class KeithleyPlot(tk.Frame):
 
             # self.values = np.append(self.values, self.keithley.read_value())
             value = self.keithley.read_value()
+            #print(value)
             self.valuelabel['text'] = value + 'A'
             self.values[self.i, 0] = float(value)
 
@@ -215,7 +216,7 @@ class KeithleyPlot(tk.Frame):
             self.line.set_ydata(self.values[~np.isnan(self.values)])
             self.line.set_xdata(self.time[~np.isnan(self.values)]) 
             
-            # rescale axes every tenth run
+            # rescale axes every hundredth run
             if self.i % 10 == 1:
                 self.a.relim()
                 self.a.autoscale_view(scalex=False)
@@ -251,10 +252,10 @@ class KeithleyPlot(tk.Frame):
         if self.starttime is None:
             return
 
-        f = filedialog.asksaveasfile(mode='bw', defaultextension=".txt", initialfile='PicoAmpValues_' + self.starttime.strftime('%Y-%m-%d_%H-%M'))
+        f = filedialog.asksaveasfilename(defaultextension=".txt", initialfile='PicoAmpValues_' + self.starttime.strftime('%Y-%m-%d_%H-%M'))
+        print(f)
         if f is None:  # asksaveasfile return `None` if dialog closed with "cancel".
             return
-
         comments = u'Starttime: ' + self.starttime.strftime('%Y/%m/%d - %H:%M')
         ydata = self.values[~np.isnan(self.values)]
         xdata = self.time[~np.isnan(self.values)]
@@ -263,7 +264,7 @@ class KeithleyPlot(tk.Frame):
 
 
 root = tk.Tk()
-root.geometry("980x600")
+root.geometry("980x640")
 app = KeithleyPlot(master=root)
 root.protocol("WM_DELETE_WINDOW", app.on_closing)
 root.wm_title("Keithley Plot")

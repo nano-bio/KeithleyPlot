@@ -48,12 +48,14 @@ class Keithley():
         if self.connected:
             self.serialwrite('*RST') 
             self.serialwrite('SYST:ZCH ON')
-            self.serialwrite('RANG .002')
-            self.serialwrite('NPLC 5')
+            self.serialwrite('RANG 2E-9')
             self.serialwrite('INIT')
+            
+            self.serialwrite('SYST:ZCOR:STAT OFF')
             self.serialwrite('SYST:ZCOR:ACQ')
+            
             self.serialwrite('SYST:ZCOR ON')
-            self.serialwrite('RANG:AUTO ON')
+            self.serialwrite('CURR:RANG:AUTO ON')
             self.serialwrite('SYST:ZCH OFF')
             self.read_value()
         
